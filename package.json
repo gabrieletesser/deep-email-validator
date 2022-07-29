@@ -23,9 +23,7 @@
   ],
   "scripts": {
     "start": "yarn serve",
-    "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "prepare": "yarn build",
     "prepublishOnly": "yarn test && yarn lint",
     "preversion": "yarn lint",
     "version": "yarn format && git add -A src",
