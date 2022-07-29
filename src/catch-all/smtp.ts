@@ -52,7 +52,7 @@ export const checkCatchAll = async (sender: string, recipient: string, domain: s
           socket.emit('fail', 'SMTP communication unexpectedly closed.')
         }
       } else {
-        socket.emit('success')
+        socket.emit('fail', 'The server is likely to have catch-all enabled')
       }
     })
 
@@ -65,9 +65,9 @@ export const checkCatchAll = async (sender: string, recipient: string, domain: s
         receivedData = true
         log('data', msg)
         if (hasCode(msg, 220) || hasCode(msg, 250)) {
-          socket.emit('fail', 'The mail server most likely has catch-all activated'); 
+          socket.emit('next', msg)
         } else if (hasCode(msg, 550)) {
-          socket.emit('fail', 'Mailbox not found.')
+          socket.emit('success', 'Mailbox not found.')
         } else {
           const [code] = Object.typedKeys(ErrorCodes).filter(x => hasCode(msg, x))
           socket.emit('fail', ErrorCodes[code] || 'Unrecognized SMTP response.')
