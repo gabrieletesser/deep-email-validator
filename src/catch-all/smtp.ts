@@ -8,7 +8,7 @@ const log = (...args: unknown[]) => {
   }
 }
 
-export const checkSMTP = async (sender: string, recipient: string, exchange: string): Promise<OutputFormat> => {
+export const checkCatchAll = async (sender: string, recipient: string, domain: string, exchange: string): Promise<OutputFormat> => {
   const timeout = 1000 * 10 // 10 seconds
   return new Promise(r => {
     let receivedData = false
@@ -25,7 +25,7 @@ export const checkSMTP = async (sender: string, recipient: string, exchange: str
       // }
     })
     socket.once('fail', msg => {
-      r(createOutput('smtp', msg))
+      r(createOutput('catchAll', msg))
       if (socket.writable && !socket.destroyed) {
         socket.write(`quit\r\n`)
         socket.end()
@@ -42,7 +42,7 @@ export const checkSMTP = async (sender: string, recipient: string, exchange: str
       r(createOutput())
     })
 
-    const commands = [`helo ${exchange}\r\n`, `mail from: <${sender}>\r\n`, `rcpt to: <${recipient}>\r\n`]
+    const commands = [`helo ${exchange}\r\n`, `mail from: <${sender}>\r\n`, `rcpt to: <orfeorineorineorinveoinvtoinvrotnivrotinvotnivrotvinrotvni@${domain}>\r\n`]
     let i = 0
     socket.on('next', () => {
       if (i < 3) {
@@ -65,7 +65,7 @@ export const checkSMTP = async (sender: string, recipient: string, exchange: str
         receivedData = true
         log('data', msg)
         if (hasCode(msg, 220) || hasCode(msg, 250)) {
-          socket.emit('next', msg)
+          socket.emit('fail', 'The mail server most likely has catch-all activated'); 
         } else if (hasCode(msg, 550)) {
           socket.emit('fail', 'Mailbox not found.')
         } else {

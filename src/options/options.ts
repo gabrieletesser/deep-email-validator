@@ -5,6 +5,7 @@ const defaultOptions: ValidatorOptionsFinal = {
   validateMx: true,
   validateTypo: true,
   validateDisposable: true,
+  validateCatchAll: false,
   validateSMTP: true,
 }
 
@@ -13,7 +14,8 @@ type Options = {
   validateRegex: boolean
   validateMx: boolean
   validateTypo: boolean
-  validateDisposable: boolean
+  validateDisposable: boolean,
+  validateCatchAll: boolean,
   validateSMTP: boolean
 }
 

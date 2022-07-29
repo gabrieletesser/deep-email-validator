@@ -6,6 +6,7 @@ import { checkDisposable } from './disposable/disposable'
 import { getOptions, ValidatorOptions } from './options/options'
 import { OutputFormat, createOutput } from './output/output'
 import './types'
+import { checkCatchAll } from './catch-all/smtp'
 
 export async function validate(emailOrOptions: string | ValidatorOptions): Promise<OutputFormat> {
   const options = getOptions(emailOrOptions)
@@ -31,6 +32,11 @@ export async function validate(emailOrOptions: string | ValidatorOptions): Promi
   if (options.validateMx) {
     const mx = await getBestMx(domain)
     if (!mx) return createOutput('mx', 'MX record not found')
+
+    if(options.validateCatchAll){
+      return checkCatchAll(options.sender, email, domain, mx.exchange)
+  
+    }
     if (options.validateSMTP) {
       return checkSMTP(options.sender, email, mx.exchange)
     }
